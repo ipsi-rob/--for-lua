@@ -1,0 +1,87 @@
+-- 初期設定
+local board = {
+    {" ", " ", " "},
+    {" ", " ", " "},
+    {" ", " ", " "}
+}
+
+-- 盤面を表示する関数
+local function printBoard()
+    for i = 1, 3 do
+        print(table.concat(board[i], " | "))
+        if i < 3 then
+            print("---------")
+        end
+    end
+end
+
+-- 勝利条件をチェックする関数
+local function checkWin(player)
+    -- 横のチェック
+    for i = 1, 3 do
+        if board[i][1] == player and board[i][2] == player and board[i][3] == player then
+            return true
+        end
+    end
+    -- 縦のチェック
+    for i = 1, 3 do
+        if board[1][i] == player and board[2][i] == player and board[3][i] == player then
+            return true
+        end
+    end
+    -- 斜めのチェック
+    if (board[1][1] == player and board[2][2] == player and board[3][3] == player) or
+       (board[1][3] == player and board[2][2] == player and board[3][1] == player) then
+        return true
+    end
+
+    return false
+end
+
+-- 空いているマスがあるかを確認する関数
+local function isBoardFull()
+    for i = 1, 3 do
+        for j = 1, 3 do
+            if board[i][j] == " " then
+                return false
+            end
+        end
+    end
+    return true
+end
+
+-- 主処理
+local function playGame()
+    local currentPlayer = "X"
+
+    print("マルバツゲームを始めます！")
+    printBoard()
+
+    while true do
+        print("プレイヤー " .. currentPlayer .. " の番です。")
+        print("行番号 (1-3) を入力してください:")
+        local row = tonumber(io.read())
+        print("列番号 (1-3) を入力してください:")
+        local col = tonumber(io.read())
+
+        if row >= 1 and row <= 3 and col >= 1 and col <= 3 and board[row][col] == " " then
+            board[row][col] = currentPlayer
+            printBoard()
+
+            if checkWin(currentPlayer) then
+                print("プレイヤー " .. currentPlayer .. " の勝ちです！")
+                break
+            elseif isBoardFull() then
+                print("引き分けです！")
+                break
+            end
+
+            -- プレイヤー交代
+            currentPlayer = (currentPlayer == "X") and "O" or "X"
+        else
+            print("無効な入力です。もう一度入力してください。")
+        end
+    end
+end
+
+playGame()
